@@ -1,7 +1,26 @@
-const CreateForm = ({handleCreate, title, author, url, setTitle, setAuthor, setUrl}) => {
+import { useState } from 'react' 
+
+
+const CreateForm = ({createBlog}) => {
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
+
+  const handleCreate = async (event) => {
+    event.preventDefault()
+    createBlog({
+      title,
+      author,
+      url
+    })
+    setTitle('')
+    setAuthor('')
+    setUrl('')
+  }
+  
   return (
     <div>
-      <h2>create new</h2>
+      <h3>create new</h3>
       <form onSubmit={handleCreate}>
         <div>
           title:
