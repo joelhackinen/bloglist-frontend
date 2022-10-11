@@ -1,17 +1,19 @@
 import { useState } from 'react' 
 
 
-const CreateForm = ({createBlog}) => {
+const CreateForm = ({ createBlog, user }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
   const handleCreate = async (event) => {
     event.preventDefault()
+    const {token, ...u} = user
     createBlog({
       title,
       author,
-      url
+      url,
+      user: u
     })
     setTitle('')
     setAuthor('')

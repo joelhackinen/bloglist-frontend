@@ -11,13 +11,11 @@ import jwt_decode from 'jwt-decode'
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [messageText, setMessageText] = useState('')
   const [messageError, setMessageError] = useState(false)
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
+    blogService.getAll().then(blogs => 
       setBlogs(blogs)
     )
   }, [])
@@ -41,21 +39,18 @@ const App = () => {
     }, 3000)
   }
 
-  const handleLogin = async (event) => {
-    event.preventDefault()
+  const login = async (username, password) => {
     try {
-      const u = await loginService.login({
+      const loggedUser = await loginService.login({
         username, password,
       })
-      showMessage(`welcome, ${username}!`, false)
+      blogService.setToken(loggedUser.token)
+      loggedUser.id = jwt_decode(loggedUser.token).id
       window.localStorage.setItem(
-        'loggedBloglistUser', JSON.stringify(u)
+        'loggedBloglistUser', JSON.stringify(loggedUser)
       )
-
-      blogService.setToken(u.token)
-      setUser(u)
-      setUsername('')
-      setPassword('')
+      showMessage(`welcome, ${username}!`, false)
+      setUser(loggedUser)
     }
     catch (e) {
       showMessage('wrong username or password', true)
@@ -79,9 +74,9 @@ const App = () => {
       const created = await blogService.create(
         blogObject
       )
+      console.log(created)
       showMessage(`a new blog ${created.title} by ${created.author} created`, false)
-      const newBlogs = await blogService.getAll()
-      setBlogs(newBlogs)
+      setBlogs(blogs.concat({...created, user: user}))
     }
     catch (e) {
       showMessage(`adding failed: ${e}`, true)
@@ -107,8 +102,7 @@ const App = () => {
         await blogService.remove(
           blogObject.id
         )
-        const newBlogs = await blogService.getAll()
-        setBlogs(newBlogs)
+        setBlogs(blogs.filter(b => b.id !== blogObject.id))
         showMessage('blog removed', false)
       }
       catch (e) {
@@ -123,9 +117,7 @@ const App = () => {
     return (
       <div>
         <LoginForm 
-          handleLogin={handleLogin}
-          setUsername={setUsername}
-          setPassword={setPassword}
+          login={login}
         />
       </div>
     )
@@ -138,7 +130,7 @@ const App = () => {
       {user.name} logged in
       <button onClick={handleLogout}>Logout</button>
       <Togglable showText='create' hideText='cancel'>
-        <CreateForm createBlog={addBlog}/>
+        <CreateForm createBlog={addBlog} user={user} />
       </Togglable>
       <h3>blogs</h3>
       {sortedBlogs.map(blog =>
