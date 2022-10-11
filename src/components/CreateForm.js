@@ -1,4 +1,4 @@
-import { useState } from 'react' 
+import { useState } from 'react'
 
 
 const CreateForm = ({ createBlog, user }) => {
@@ -8,7 +8,7 @@ const CreateForm = ({ createBlog, user }) => {
 
   const handleCreate = async (event) => {
     event.preventDefault()
-    const {token, ...u} = user
+    const { token, ...u } = user
     createBlog({
       title,
       author,
@@ -19,14 +19,14 @@ const CreateForm = ({ createBlog, user }) => {
     setAuthor('')
     setUrl('')
   }
-  
+
   return (
     <div>
       <h3>create new</h3>
       <form onSubmit={handleCreate}>
         <div>
           title:
-            <input
+          <input
             type="text"
             name="Title"
             value={title}
@@ -35,7 +35,7 @@ const CreateForm = ({ createBlog, user }) => {
         </div>
         <div>
           author:
-            <input
+          <input
             type="text"
             name="Author"
             value={author}
@@ -44,7 +44,7 @@ const CreateForm = ({ createBlog, user }) => {
         </div>
         <div>
           url:
-            <input
+          <input
             type="text"
             name="Url"
             value={url}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Togglable from './components/Togglable'
 import Blog from './components/Blog'
 import Message from './components/Message'
@@ -15,7 +15,7 @@ const App = () => {
   const [messageError, setMessageError] = useState(false)
 
   useEffect(() => {
-    blogService.getAll().then(blogs => 
+    blogService.getAll().then(blogs =>
       setBlogs(blogs)
     )
   }, [])
@@ -30,6 +30,8 @@ const App = () => {
       console.log(user)
     }
   }, [])
+
+  const createFormRef = useRef()
 
   const showMessage = (text, err) => {
     setMessageText(text)
@@ -63,7 +65,7 @@ const App = () => {
       window.localStorage.removeItem('loggedBloglistUser')
       showMessage('logged out', false)
     }
-    catch {
+    catch (e) {
       showMessage('loggin out failed', true)
     }
     setUser(null)
@@ -71,12 +73,13 @@ const App = () => {
 
   const addBlog = async (blogObject) => {
     try {
+      createFormRef.current.toggleVisibility()
       const created = await blogService.create(
         blogObject
       )
       console.log(created)
       showMessage(`a new blog ${created.title} by ${created.author} created`, false)
-      setBlogs(blogs.concat({...created, user: user}))
+      setBlogs(blogs.concat({ ...created, user: user }))
     }
     catch (e) {
       showMessage(`adding failed: ${e}`, true)
@@ -84,14 +87,14 @@ const App = () => {
   }
 
   const editBlog = async (blogObject) => {
-    const {id, ...newBlog} = blogObject
+    const { id, ...newBlog } = blogObject
     try {
       const created = await blogService.update(
         id,
         newBlog
       )
-      setBlogs(blogs.map(b => b.id === id ? b = {...b, likes: created.likes} : b))
-    } catch {
+      setBlogs(blogs.map(b => b.id === id ? b = { ...b, likes: created.likes } : b))
+    } catch (e) {
       showMessage('editing failed', true)
     }
   }
@@ -112,24 +115,24 @@ const App = () => {
   }
 
   const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
-  
+
   if (user === null) {
     return (
       <div>
-        <LoginForm 
+        <LoginForm
           login={login}
         />
       </div>
     )
   }
-  
+
   return (
     <div>
       <h2>blogapp</h2>
       <Message msg={messageText} err={messageError}/>
       {user.name} logged in
       <button onClick={handleLogout}>Logout</button>
-      <Togglable showText='create' hideText='cancel'>
+      <Togglable showText='create' hideText='cancel'  ref={createFormRef}>
         <CreateForm createBlog={addBlog} user={user} />
       </Togglable>
       <h3>blogs</h3>
