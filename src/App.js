@@ -3,7 +3,7 @@ import Togglable from './components/Togglable'
 import Blog from './components/Blog'
 import Message from './components/Message'
 import LoginForm from './components/LoginForm'
-import CreateForm from './components/CreateForm'
+import BlogForm from './components/BlogForm'
 import blogService from './services/blogService'
 import loginService from './services/loginService'
 import jwt_decode from 'jwt-decode'
@@ -74,8 +74,9 @@ const App = () => {
   const addBlog = async (blogObject) => {
     try {
       createFormRef.current.toggleVisibility()
+      const { token, ...u } = user
       const created = await blogService.create(
-        blogObject
+        { user: u, ...blogObject }
       )
       console.log(created)
       showMessage(`a new blog ${created.title} by ${created.author} created`, false)
@@ -133,7 +134,7 @@ const App = () => {
       {user.name} logged in
       <button onClick={handleLogout}>Logout</button>
       <Togglable showText='create' hideText='cancel'  ref={createFormRef}>
-        <CreateForm createBlog={addBlog} user={user} />
+        <BlogForm createBlog={addBlog} user={user} />
       </Togglable>
       <h3>blogs</h3>
       {sortedBlogs.map(blog =>
