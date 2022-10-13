@@ -120,6 +120,7 @@ const App = () => {
   if (user === null) {
     return (
       <div>
+        <Message msg={messageText} err={messageError}/>
         <LoginForm
           login={login}
         />
@@ -132,7 +133,7 @@ const App = () => {
       <h2>blogapp</h2>
       <Message msg={messageText} err={messageError}/>
       {user.name} logged in
-      <button onClick={handleLogout}>Logout</button>
+      <button id="logout-button" onClick={handleLogout}>Logout</button>
       <Togglable showText='create' hideText='cancel'  ref={createFormRef}>
         <BlogForm createBlog={addBlog} user={user} />
       </Togglable>

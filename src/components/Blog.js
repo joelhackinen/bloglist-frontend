@@ -28,7 +28,7 @@ const Blog = ({ blog, addLike, deleteBlog, userId }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div className="blog" style={blogStyle}>
       {blog.title} by {blog.author}
       <Togglable showText='view' hideText='hide'>
         url: {blog.url}<br/>

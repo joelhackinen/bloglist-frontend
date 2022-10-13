@@ -13,7 +13,7 @@ const Message = ({ msg, err }) => {
   }
 
   return (
-    <div style={messageStyle}>
+    <div className="error" style={messageStyle}>
       {msg}
     </div>
   )
